@@ -74,8 +74,9 @@ def before_request():
         db.session.commit()
 
 @app.route('/edit_profile', methods=['POST', 'GET'])
+@login_required
 def edit_profile():
-    form = EditProfileForm()
+    form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
@@ -83,6 +84,6 @@ def edit_profile():
         flash("changes saved")
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
-        form.username.data = current.username.data
-        form.about_me.data = current.about_me.data
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title="edit profile", form=form)
